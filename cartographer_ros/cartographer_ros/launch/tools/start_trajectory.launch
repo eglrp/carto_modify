@@ -1,0 +1,30 @@
+<!--
+  Copyright 2016 The Cartographer Authors
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<launch>
+  <!--arg name = "initial_pose" default = "'{to_trajectory_id = 0, relative_pose = { translation = { 0. , 0. , 0. }, rotation = { w=1., x=0., y=0., z=0. } } }'" /-->
+
+  <arg name = "configuration_basename" default = "/mower/mower.lua" />
+
+  <node name="cartographer_start_trajectory" pkg="cartographer_ros"
+    type="cartographer_start_trajectory" args="
+        -configuration_directory $(find cartographer_ros)/configuration_files
+        -configuration_basename $(arg configuration_basename)
+        -initial_pose $(arg initial_pose)"
+  output="screen">
+  </node>
+
+</launch>

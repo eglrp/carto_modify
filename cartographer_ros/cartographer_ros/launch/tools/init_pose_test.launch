@@ -1,0 +1,16 @@
+<!-- /-->
+<launch>
+  <arg name="trajectory_id" default="1" /> 
+  <!-- modify here -->
+  <arg name="pbstream" default="/media/tb/work/bagfile/mower/mower_10.26_11.bag.pbstream" /> 
+
+  <node pkg="rosservice" type="rosservice" name="finish_trajectory" args="call /finish_trajectory $(arg trajectory_id)"/> 
+  
+  <!-- ed: New Trajectory with relative pose -->
+  <node pkg="cartographer_ros" type="cartographer_start_trajectory" name="cartographer_start_trajectory" output="screen" args="
+        -configuration_directory $(find cartographer_ros)/configuration_files/mower
+        -configuration_basename mower_localization.lua
+        -pbstream_filename $(arg pbstream)">
+  </node>
+</launch>
+
