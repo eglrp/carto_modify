@@ -25,6 +25,7 @@ namespace cartographer {
 namespace pose_graph {
 
 class PoseGraphController {
+ public:
   PoseGraphController(std::unique_ptr<Optimizer> optimizer)
       : optimizer_(std::move(optimizer)) {}
 
