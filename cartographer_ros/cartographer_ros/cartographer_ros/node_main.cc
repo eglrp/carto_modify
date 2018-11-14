@@ -13,7 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ *
+-configuration_directory
+${HOME}/cartographer/carto_modify/cartographer_ros/cartographer_ros/configuration_files/
+-configuration_basename
+sensor_localization.lua
+-load_state_filename
+/media/tb/work/bagfile/sensor_9.10_1.bag.pbstream
 
+
+build & run cartographer_node, should edit configurations ( node_main.cc )
+T1:
+roscore
+T2:
+cd ../carto_modify
+source cmake-build-relwithdebinfo/devel/setup.bash
+rosparam load cartographer_ros/cartographer_ros/urdf/sensor.urdf /robot_description
+rosrun robot_state_publisher robot_state_publisher
+T3:
+cd ../carto_modify
+source cmake-build-relwithdebinfo/devel/setup.bash
+rviz -d cartographer_ros/cartographer_ros/configuration_files/sensor.rviz
+T4:
+rosparam set /use_sim_time true
+rosbag play --clock /media/tb/work/bagfile/sensor_9.7_a.bag
+
+then, build & run cartographer_occupancy_grid_node to generate /map
+(occupancy_grid_node_main.cc should not edit configurations)
+ *
+ */
 #include "absl/memory/memory.h"
 #include "cartographer/mapping/map_builder.h"
 #include "cartographer_ros/node.h"
@@ -21,6 +50,10 @@
 #include "cartographer_ros/ros_log_sink.h"
 #include "gflags/gflags.h"
 #include "tf2_ros/transform_listener.h"
+
+#include "tf2_msgs/TFMessage.h" // add
+#include <tf/tf.h> // add
+#include <fstream> // add
 
 DEFINE_bool(collect_metrics, false,
             "Activates the collection of runtime metrics. If activated, the "
@@ -43,9 +76,113 @@ DEFINE_bool(
 DEFINE_string(
     save_state_filename, "",
     "If non-empty, serialize state and write it to disk before shutting down.");
+DEFINE_string(
+    save_pose_filename, "", "Saving pose for remapping.");  // add
 
 namespace cartographer_ros {
 namespace {
+
+int flag = 0;
+
+void SaveToLua(const tf2_msgs::TFMessage::ConstPtr& msg) { // add
+  flag ++;
+
+  const std::string save_pose_file =
+          FLAGS_configuration_directory + "/" + FLAGS_save_pose_filename;
+
+  if(flag==1){
+    LOG(INFO) << "Saving initial transform to '" << save_pose_file << "'...";
+  }
+
+  if(msg->transforms.data()->header.frame_id == "map" &&
+     msg->transforms.data()->child_frame_id == "base_link")
+  {
+    tf::Transform pose_tf;
+
+    pose_tf.setOrigin(tf::Vector3(msg->transforms.data()->transform.translation.x,
+                                 msg->transforms.data()->transform.translation.y,
+                                 msg->transforms.data()->transform.translation.z));
+    pose_tf.setRotation(tf::Quaternion(msg->transforms.data()->transform.rotation.x,
+                                      msg->transforms.data()->transform.rotation.y,
+                                      msg->transforms.data()->transform.rotation.z,
+                                      msg->transforms.data()->transform.rotation.w));
+
+    // ed: Quaternion to RPY
+    tf::Quaternion q(
+            pose_tf.getRotation().x(),
+            pose_tf.getRotation().y(),
+            pose_tf.getRotation().z(),
+            pose_tf.getRotation().w());
+
+    tf::Matrix3x3 m(q); // 四元数转为旋转矩阵
+
+    double roll, pitch, yaw;
+    m.getRPY(roll, pitch, yaw); // 旋转矩阵转为欧拉角
+
+    int to_trajectory_id = 0;
+    // ed: pitch isn't used
+    std::string parsed_string ="{to_trajectory_id = "    \
+                             + std::to_string(to_trajectory_id)         \
+                             + ", relative_pose = { translation = { "   \
+                             + std::to_string(pose_tf.getOrigin().x()) + ", " \
+                             + std::to_string(pose_tf.getOrigin().y()) + ", " \
+                             + std::to_string(pose_tf.getOrigin().z()) + \
+                             + "}, rotation = { "\
+                             + std::to_string(roll) + ","       \
+                             + std::to_string(pitch) + ","      \
+                             + std::to_string(yaw) + "}}}";
+
+    std::ofstream f1(save_pose_file);
+    if(!f1)
+      return;
+
+    f1 << "-- Saving the pose information for remapping." << std::endl;
+    f1 << parsed_string << std::endl;
+
+    f1.close();
+  }
+}
+
+//void SaveToLua(const tf2_msgs::TFMessage::ConstPtr& tf) {
+//    const std::string save_pose_file =
+//            FLAGS_configuration_directory + "/" + FLAGS_save_pose_filename;
+//
+//    if(tf->transforms.data()->header.frame_id == "map")
+//    {
+//        auto temp_tf = *tf->transforms.data();
+//        double temp_translation_x = temp_tf.transform.translation.x;
+//        double temp_translation_y = temp_tf.transform.translation.y;
+//        double temp_translation_z = temp_tf.transform.translation.z;
+//        double temp_rotation_w = temp_tf.transform.rotation.w;
+//        double temp_rotation_x = temp_tf.transform.rotation.x;
+//        double temp_rotation_y = temp_tf.transform.rotation.y;
+//        double temp_rotation_z = temp_tf.transform.rotation.z;
+//
+//        std::ofstream f1(save_pose_file);
+//        if(!f1)
+//            return;
+//
+//        f1 << "-- The pose information used by remapping." << std::endl;
+//        f1 << "{" << std::endl;
+//        f1 << "    to_trajectory_id = 0," << std::endl;
+//        f1 << "    relative_pose = {" << std::endl;
+//        f1 << "        translation = {" << std::endl;
+//        f1 << "\t\t" << temp_translation_x << "," << std::endl;
+//        f1 << "\t\t" << temp_translation_y << "," << std::endl;
+//        f1 << "\t\t" << temp_translation_z << "," << std::endl;
+//        f1 << "        }," << std::endl;
+//        f1 << "        rotation = {" << std::endl;
+//        f1 << "\t\tw=" << temp_rotation_w << ","<< std::endl;
+//        f1 << "\t\tx=" << temp_rotation_x << ","<< std::endl;
+//        f1 << "\t\ty=" << temp_rotation_y << ","<< std::endl;
+//        f1 << "\t\tz=" << temp_rotation_z << ","<< std::endl;
+//        f1 << "        }" << std::endl;
+//        f1 << "    }" << std::endl;
+//        f1 << "}" << std::endl;
+//
+//        f1.close();
+//    }
+//}
 
 void Run() {
   constexpr double kTfBufferCacheTimeInSeconds = 10.;
@@ -67,6 +204,9 @@ void Run() {
   if (FLAGS_start_trajectory_with_default_topics) {
     node.StartTrajectoryWithDefaultTopics(trajectory_options);
   }
+
+  ::ros::NodeHandle nh; // add
+  ros::Subscriber sub_tf = nh.subscribe<tf2_msgs::TFMessage>("tf", 100, SaveToLua); // add
 
   ::ros::spin();
 

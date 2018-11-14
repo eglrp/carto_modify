@@ -32,6 +32,9 @@
 #include "tf2_ros/static_transform_broadcaster.h"
 #include "urdf/model.h"
 
+#include "tf2_msgs/TFMessage.h" // add
+#include <fstream> // add
+
 DEFINE_bool(collect_metrics, false,
             "Activates the collection of runtime metrics. If activated, the "
             "metrics can be accessed via a ROS service.");
@@ -66,6 +69,7 @@ DEFINE_bool(keep_running, false,
 DEFINE_double(skip_seconds, 0,
               "Optional amount of seconds to skip from the beginning "
               "(i.e. when the earliest bag starts.). ");
+DEFINE_string(read_pose_filename, "pose_file.lua", "Reading pose for remapping.");
 
 namespace cartographer_ros {
 
@@ -92,8 +96,19 @@ void RunOfflineNode(const MapBuilderFactory& map_builder_factory) {
   const auto configuration_basenames =
       cartographer_ros::SplitString(FLAGS_configuration_basenames, ',');
   std::vector<TrajectoryOptions> bag_trajectory_options(1);
-  std::tie(node_options, bag_trajectory_options.at(0)) =
-      LoadOptions(FLAGS_configuration_directory, configuration_basenames.at(0));
+//  std::tie(node_options, bag_trajectory_options.at(0)) =
+//      LoadOptions(FLAGS_configuration_directory, configuration_basenames.at(0));
+  if (!FLAGS_read_pose_filename.empty()) {
+    const std::string read_pose_file =
+            FLAGS_configuration_directory + "/" + FLAGS_read_pose_filename;
+    LOG(INFO) << "Reading initial transform from '" << read_pose_file << "'...";
+    std::tie(node_options, bag_trajectory_options.at(0)) =
+            LoadOptions(FLAGS_configuration_directory, configuration_basenames.at(0),
+                        FLAGS_read_pose_filename);
+  } else{
+    std::tie(node_options, bag_trajectory_options.at(0)) =
+            LoadOptions(FLAGS_configuration_directory, configuration_basenames.at(0));
+  }
 
   for (size_t bag_index = 1; bag_index < bag_filenames.size(); ++bag_index) {
     TrajectoryOptions current_trajectory_options;

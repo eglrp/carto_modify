@@ -138,38 +138,38 @@ void init_pose_callback(const geometry_msgs::Transform::ConstPtr& msg){
 
     std::cout << "[+] CB : /init_pose_string data received! " << std::endl;
 
-    ::cartographer::io::ProtoStreamReader reader(FLAGS_pbstream_filename);
-    cartographer_ros::NodeOptions node_options;
-    cartographer_ros::TrajectoryOptions trajectory_options;
-    std::tie(node_options, trajectory_options) =
-            cartographer_ros::LoadOptions(FLAGS_configuration_directory, FLAGS_configuration_basename);
-    auto map_builder = absl::make_unique<cartographer::mapping::MapBuilder>(
-            node_options.map_builder_options);
-
-    // ed: load pbstream
-    map_builder->LoadState(&reader, true);
-
-    // ed: get TrajectoryNodePose
-    const auto node_poses = map_builder->pose_graph()->GetTrajectoryNodePoses();
-    double pbstream_x = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().x();
-    double pbstream_y = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().y();
-    double pbstream_z = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().z();
-    double pbstream_quat_x = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().x();
-    double pbstream_quat_y = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().y();
-    double pbstream_quat_z = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().z();
-    double pbstream_quat_w = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().w();
+//    ::cartographer::io::ProtoStreamReader reader(FLAGS_pbstream_filename);
+//    cartographer_ros::NodeOptions node_options;
+//    cartographer_ros::TrajectoryOptions trajectory_options;
+//    std::tie(node_options, trajectory_options) =
+//            cartographer_ros::LoadOptions(FLAGS_configuration_directory, FLAGS_configuration_basename);
+//    auto map_builder = absl::make_unique<cartographer::mapping::MapBuilder>(
+//            node_options.map_builder_options);
+//
+//    // ed: load pbstream
+//    map_builder->LoadState(&reader, true);
+//
+//    // ed: get TrajectoryNodePose
+//    const auto node_poses = map_builder->pose_graph()->GetTrajectoryNodePoses();
+//    double pbstream_x = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().x();
+//    double pbstream_y = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().y();
+//    double pbstream_z = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().z();
+//    double pbstream_quat_x = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().x();
+//    double pbstream_quat_y = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().y();
+//    double pbstream_quat_z = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().z();
+//    double pbstream_quat_w = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().w();
 
     tf::Transform map_tf;
-    tf::Transform EOT_tf;
+//    tf::Transform EOT_tf;
     tf::Transform output_tf;
 
-    EOT_tf.setOrigin(tf::Vector3(pbstream_x,
-                                 pbstream_y,
-                                 pbstream_z));
-    EOT_tf.setRotation(tf::Quaternion(pbstream_quat_x,
-                                      pbstream_quat_y,
-                                      pbstream_quat_z,
-                                      pbstream_quat_w));
+//    EOT_tf.setOrigin(tf::Vector3(pbstream_x,
+//                                 pbstream_y,
+//                                 pbstream_z));
+//    EOT_tf.setRotation(tf::Quaternion(pbstream_quat_x,
+//                                      pbstream_quat_y,
+//                                      pbstream_quat_z,
+//                                      pbstream_quat_w));
 
     map_tf.setOrigin(tf::Vector3(msg->translation.x,
                                  msg->translation.y,
@@ -231,38 +231,38 @@ void initialpose_callback(const geometry_msgs::PoseWithCovarianceStamped::ConstP
 
     std::cout << "[+] CB : /initialpose data received! " << std::endl;
 
-    ::cartographer::io::ProtoStreamReader reader(FLAGS_pbstream_filename);
-    cartographer_ros::NodeOptions node_options;
-    cartographer_ros::TrajectoryOptions trajectory_options;
-    std::tie(node_options, trajectory_options) =
-            cartographer_ros::LoadOptions(FLAGS_configuration_directory, FLAGS_configuration_basename);
-    auto map_builder = absl::make_unique<cartographer::mapping::MapBuilder>(
-            node_options.map_builder_options);
-
-    // ed: load pbstream
-    map_builder->LoadState(&reader, true);
-
-    // ed: get TrajectoryNodePose
-    const auto node_poses = map_builder->pose_graph()->GetTrajectoryNodePoses();
-    double pbstream_x = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().x();
-    double pbstream_y = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().y();
-    double pbstream_z = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().z();
-    double pbstream_quat_x = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().x();
-    double pbstream_quat_y = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().y();
-    double pbstream_quat_z = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().z();
-    double pbstream_quat_w = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().w();
+//    ::cartographer::io::ProtoStreamReader reader(FLAGS_pbstream_filename);
+//    cartographer_ros::NodeOptions node_options;
+//    cartographer_ros::TrajectoryOptions trajectory_options;
+//    std::tie(node_options, trajectory_options) =
+//            cartographer_ros::LoadOptions(FLAGS_configuration_directory, FLAGS_configuration_basename);
+//    auto map_builder = absl::make_unique<cartographer::mapping::MapBuilder>(
+//            node_options.map_builder_options);
+//
+//    // ed: load pbstream
+//    map_builder->LoadState(&reader, true);
+//
+//    // ed: get TrajectoryNodePose
+//    const auto node_poses = map_builder->pose_graph()->GetTrajectoryNodePoses();
+//    double pbstream_x = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().x();
+//    double pbstream_y = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().y();
+//    double pbstream_z = node_poses.BeginOfTrajectory(0)->data.global_pose.translation().z();
+//    double pbstream_quat_x = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().x();
+//    double pbstream_quat_y = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().y();
+//    double pbstream_quat_z = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().z();
+//    double pbstream_quat_w = node_poses.BeginOfTrajectory(0)->data.global_pose.rotation().w();
 
     tf::Transform map_tf;
-    tf::Transform EOT_tf;
+//    tf::Transform EOT_tf;
     tf::Transform output_tf;
 
-    EOT_tf.setOrigin(tf::Vector3(pbstream_x,
-                                 pbstream_y,
-                                 pbstream_z));
-    EOT_tf.setRotation(tf::Quaternion(pbstream_quat_x,
-                                      pbstream_quat_y,
-                                      pbstream_quat_z,
-                                      pbstream_quat_w));
+//    EOT_tf.setOrigin(tf::Vector3(pbstream_x,
+//                                 pbstream_y,
+//                                 pbstream_z));
+//    EOT_tf.setRotation(tf::Quaternion(pbstream_quat_x,
+//                                      pbstream_quat_y,
+//                                      pbstream_quat_z,
+//                                      pbstream_quat_w));
 
     map_tf.setOrigin(tf::Vector3(msg->pose.pose.position.x,
                                  msg->pose.pose.position.y,
@@ -321,98 +321,98 @@ void initialpose_callback(const geometry_msgs::PoseWithCovarianceStamped::ConstP
 }
 
 // ed: /move_base_simple/goal (2D Nav Goal in Rviz) subscribe callback function
-void move_base_simple_callback(const geometry_msgs::PoseStamped::ConstPtr& msg){
-  std::cout << "[+] CB : /move_base_simple/goal data received! " << std::endl;
-
-  ::cartographer::io::ProtoStreamReader reader(FLAGS_pbstream_filename);
-  cartographer_ros::NodeOptions node_options;
-  cartographer_ros::TrajectoryOptions trajectory_options;
-  std::tie(node_options, trajectory_options) =
-          cartographer_ros::LoadOptions(FLAGS_configuration_directory, FLAGS_configuration_basename);
-  auto map_builder = absl::make_unique<cartographer::mapping::MapBuilder>(
-                  node_options.map_builder_options);
-
-  // ed: load pbstream
-  map_builder->LoadState(&reader, true);
-
-  // ed: get TrajectoryNodePose
-  const auto node_poses = map_builder->pose_graph()->GetTrajectoryNodePoses();
-  double pbstream_x = std::prev(node_poses.EndOfTrajectory(0))->data.global_pose.translation().x();
-  double pbstream_y = std::prev(node_poses.EndOfTrajectory(0))->data.global_pose.translation().y();
-  double pbstream_z = std::prev(node_poses.EndOfTrajectory(0))->data.global_pose.translation().z();
-  double pbstream_quat_x = (std::prev(node_poses.EndOfTrajectory(0)))->data.global_pose.rotation().x();
-  double pbstream_quat_y = (std::prev(node_poses.EndOfTrajectory(0)))->data.global_pose.rotation().y();
-  double pbstream_quat_z = (std::prev(node_poses.EndOfTrajectory(0)))->data.global_pose.rotation().z();
-  double pbstream_quat_w = (std::prev(node_poses.EndOfTrajectory(0)))->data.global_pose.rotation().w();
-
-  tf::Transform map_tf;
-  tf::Transform EOT_tf;
-  tf::Transform output_tf;
-
-  map_tf.setOrigin(tf::Vector3(msg->pose.position.x,
-                               msg->pose.position.y,
-                               msg->pose.position.z));
-  map_tf.setRotation(tf::Quaternion(msg->pose.orientation.x,
-                                    msg->pose.orientation.y,
-                                    msg->pose.orientation.z,
-                                    msg->pose.orientation.w));
-
-  EOT_tf.setOrigin(tf::Vector3(pbstream_x,
-                               pbstream_y,
-                               pbstream_z));
-  EOT_tf.setRotation(tf::Quaternion(pbstream_quat_x,
-                                    pbstream_quat_y,
-                                    pbstream_quat_z,
-                                    pbstream_quat_w));
-
-//  output_tf = EOT_tf * map_tf;
-  output_tf = map_tf;
-
-
-    // ed: Quaternion to RPY
-  tf::Quaternion q(
-          output_tf.getRotation().x(),
-          output_tf.getRotation().y(),
-          output_tf.getRotation().z(),
-          output_tf.getRotation().w());
-  tf::Matrix3x3 m(q);
-
-  double roll, pitch, yaw;
-  m.getRPY(roll, pitch, yaw);
-
-  int to_trajectory_id = 0;   // ed: offline map's trajectory
-
-  std::cout << "[+] map_tf : ["
-            << map_tf.getOrigin().x() << ", "
-            << map_tf.getOrigin().y() << ", "
-            << map_tf.getOrigin().z() << "] " << std::endl;
-
-  std::cout << "[+] EOT_tf : ["
-            << EOT_tf.getOrigin().x() << ", "
-            << EOT_tf.getOrigin().y() << ", "
-            << EOT_tf.getOrigin().z() << "] " << std::endl;
-
-  std::cout << "[+] output_tf : ["
-            << output_tf.getOrigin().x() << ", "
-            << output_tf.getOrigin().y() << ", "
-            << output_tf.getOrigin().z() << "] " << std::endl;
-
-  // ed: pitch isn't used
-  std::string parsed_string ="{to_trajectory_id = "    \
-                             + std::to_string(to_trajectory_id)         \
-                             + ", relative_pose = { translation = { "   \
-                             + std::to_string(output_tf.getOrigin().x()) + ", " \
-                             + std::to_string(output_tf.getOrigin().y()) + ", " \
-                             + "0" + \
-                             + "}, rotation = { "\
-                             + std::to_string(roll) + ","       \
-                             + std::to_string(0) + ","      \
-                             + std::to_string(yaw) + "}}}";
-
-
-  // ed: insert value into FLAGS_initial_pose string
-  FLAGS_initial_pose = parsed_string;
-}
+//void move_base_simple_callback(const geometry_msgs::PoseStamped::ConstPtr& msg){
+//  std::cout << "[+] CB : /move_base_simple/goal data received! " << std::endl;
+//
+//  ::cartographer::io::ProtoStreamReader reader(FLAGS_pbstream_filename);
+//  cartographer_ros::NodeOptions node_options;
+//  cartographer_ros::TrajectoryOptions trajectory_options;
+//  std::tie(node_options, trajectory_options) =
+//          cartographer_ros::LoadOptions(FLAGS_configuration_directory, FLAGS_configuration_basename);
+//  auto map_builder = absl::make_unique<cartographer::mapping::MapBuilder>(
+//                  node_options.map_builder_options);
+//
+//  // ed: load pbstream
+//  map_builder->LoadState(&reader, true);
+//
+//  // ed: get TrajectoryNodePose
+//  const auto node_poses = map_builder->pose_graph()->GetTrajectoryNodePoses();
+//  double pbstream_x = std::prev(node_poses.EndOfTrajectory(0))->data.global_pose.translation().x();
+//  double pbstream_y = std::prev(node_poses.EndOfTrajectory(0))->data.global_pose.translation().y();
+//  double pbstream_z = std::prev(node_poses.EndOfTrajectory(0))->data.global_pose.translation().z();
+//  double pbstream_quat_x = (std::prev(node_poses.EndOfTrajectory(0)))->data.global_pose.rotation().x();
+//  double pbstream_quat_y = (std::prev(node_poses.EndOfTrajectory(0)))->data.global_pose.rotation().y();
+//  double pbstream_quat_z = (std::prev(node_poses.EndOfTrajectory(0)))->data.global_pose.rotation().z();
+//  double pbstream_quat_w = (std::prev(node_poses.EndOfTrajectory(0)))->data.global_pose.rotation().w();
+//
+//  tf::Transform map_tf;
+//  tf::Transform EOT_tf;
+//  tf::Transform output_tf;
+//
+//  map_tf.setOrigin(tf::Vector3(msg->pose.position.x,
+//                               msg->pose.position.y,
+//                               msg->pose.position.z));
+//  map_tf.setRotation(tf::Quaternion(msg->pose.orientation.x,
+//                                    msg->pose.orientation.y,
+//                                    msg->pose.orientation.z,
+//                                    msg->pose.orientation.w));
+//
+//  EOT_tf.setOrigin(tf::Vector3(pbstream_x,
+//                               pbstream_y,
+//                               pbstream_z));
+//  EOT_tf.setRotation(tf::Quaternion(pbstream_quat_x,
+//                                    pbstream_quat_y,
+//                                    pbstream_quat_z,
+//                                    pbstream_quat_w));
+//
+////  output_tf = EOT_tf * map_tf;
+//  output_tf = map_tf;
+//
+//
+//    // ed: Quaternion to RPY
+//  tf::Quaternion q(
+//          output_tf.getRotation().x(),
+//          output_tf.getRotation().y(),
+//          output_tf.getRotation().z(),
+//          output_tf.getRotation().w());
+//  tf::Matrix3x3 m(q);
+//
+//  double roll, pitch, yaw;
+//  m.getRPY(roll, pitch, yaw);
+//
+//  int to_trajectory_id = 0;   // ed: offline map's trajectory
+//
+//  std::cout << "[+] map_tf : ["
+//            << map_tf.getOrigin().x() << ", "
+//            << map_tf.getOrigin().y() << ", "
+//            << map_tf.getOrigin().z() << "] " << std::endl;
+//
+//  std::cout << "[+] EOT_tf : ["
+//            << EOT_tf.getOrigin().x() << ", "
+//            << EOT_tf.getOrigin().y() << ", "
+//            << EOT_tf.getOrigin().z() << "] " << std::endl;
+//
+//  std::cout << "[+] output_tf : ["
+//            << output_tf.getOrigin().x() << ", "
+//            << output_tf.getOrigin().y() << ", "
+//            << output_tf.getOrigin().z() << "] " << std::endl;
+//
+//  // ed: pitch isn't used
+//  std::string parsed_string ="{to_trajectory_id = "    \
+//                             + std::to_string(to_trajectory_id)         \
+//                             + ", relative_pose = { translation = { "   \
+//                             + std::to_string(output_tf.getOrigin().x()) + ", " \
+//                             + std::to_string(output_tf.getOrigin().y()) + ", " \
+//                             + "0" + \
+//                             + "}, rotation = { "\
+//                             + std::to_string(roll) + ","       \
+//                             + std::to_string(0) + ","      \
+//                             + std::to_string(yaw) + "}}}";
+//
+//
+//  // ed: insert value into FLAGS_initial_pose string
+//  FLAGS_initial_pose = parsed_string;
+//}
 
 int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);

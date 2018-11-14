@@ -45,6 +45,11 @@ std::tuple<NodeOptions, TrajectoryOptions> LoadOptions(
     const std::string& configuration_directory,
     const std::string& configuration_basename);
 
+std::tuple<NodeOptions, TrajectoryOptions> LoadOptions(
+    const std::string& configuration_directory,
+    const std::string& configuration_basename,
+    const std::string& init_pose_filename);
+
 }  // namespace cartographer_ros
 
 #endif  // CARTOGRAPHER_ROS_CARTOGRAPHER_ROS_NODE_OPTIONS_H
